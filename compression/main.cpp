@@ -10,6 +10,8 @@
 #include <kvs/CellByCellMetropolisSampling>
 #include <kvs/glew/ParticleVolumeRenderer>
 #include <kvs/glew/RayCastingRenderer>
+#include <kvs/KVSMLObjectStructuredVolume>
+#include <kvs/StructuredVolumeExporter>
 #include <kvs/KVSMLObjectUnstructuredVolume>
 #include <kvs/UnstructuredVolumeExporter>
 #include <kvs/TransferFunction>
@@ -161,6 +163,13 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename )
     return ( t_object );
 }
 
+void WriteKVSML( kvs::StructuredVolumeObject* object, std::string filename )
+{
+    kvs::KVSMLObjectStructuredVolume* kvsml = new kvs::StructuredVolumeExporter<kvs::KVSMLObjectStructuredVolume>( object );
+    kvsml->setWritingDataType( kvs::KVSMLObjectStructuredVolume::ExternalBinary );
+    kvsml->write( filename );
+}
+
 int main( int argc, char** argv )
 {
     kvs::glut::Application app( argc, argv );
@@ -172,15 +181,16 @@ int main( int argc, char** argv )
     
     //Load Volume Data
     kvs::StructuredVolumeObject* volume = RectToUniform( param.filename );
+    WriteKVSML( volume, "Uniform.kvsml" );
     
     kvs::glew::RayCastingRenderer* renderer
     = new kvs::glew::RayCastingRenderer();
     renderer->disableShading();
-    float ka = 0.3;
-    float kd = 0.5;
-    float ks = 0.8;
-    float n  = 100;
-    renderer->setShader( kvs::Shader::Phong( ka, kd, ks, n ) );
+//    float ka = 0.3;
+//    float kd = 0.5;
+//    float ks = 0.8;
+//    float n  = 100;
+//    renderer->setShader( kvs::Shader::Phong( ka, kd, ks, n ) );
     
     TransferFunctionEditor editor( &screen );
     if ( argc > 3 )
