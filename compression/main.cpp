@@ -268,7 +268,7 @@ int main( int argc, char** argv )
             std::string outputName = volumeName + "Bspline_" + num + ".zk";
             FILE* outputFile = fopen( outputName.c_str(), "wb" );
             fwrite( buf, sizeof(float), length, outputFile );
-            std::::cou
+            std::cout << "finish writting zk file" << std::endl;
         }
 //        if( param.hasOption( "PBVR" ) )
 //        {
