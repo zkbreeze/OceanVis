@@ -10,6 +10,8 @@
 #include <kvs/CellByCellMetropolisSampling>
 #include <kvs/glew/ParticleVolumeRenderer>
 #include <kvs/glew/RayCastingRenderer>
+#include <kvs/KVSMLObjectStructuredVolume>
+#include <kvs/StructuredVolumeExporter>
 #include <kvs/KVSMLObjectUnstructuredVolume>
 #include <kvs/UnstructuredVolumeExporter>
 #include <kvs/TransferFunction>
@@ -18,9 +20,6 @@
 #include <kvs/ExtractVertices>
 #include <kvs/CommandLine>
 #include <kvs/Timer>
-#include <kvs/KVSMLObjectStructuredVolume>
-#include <kvs/StructuredVolumeExporter>
-#include "CubeToTetrahedraBspline.h"
 #include "LinearInterpolator.cpp"
 
 using namespace std;
@@ -32,31 +31,29 @@ class Argument : public kvs::CommandLine
 {
 public:
     
-    std::string filename_s;
-    std::string filename_t;
+    std::string filename;
     size_t block_size;
     size_t sp;
     float samplingstep;
-//    kvs::TransferFunction tfunc;
+    kvs::TransferFunction tfunc;
     size_t rl;
     
     Argument( int argc, char** argv ) : CommandLine ( argc, argv )
     {
         add_help_option();
-        add_option( "s", "filename of s", 1, true );
-        add_option( "t", "filename of t", 1, true );
+        add_option( "f", "filename", 1, true );
         add_option( "b", "block size", 1, false );
         add_option( "sp", "subpixel level", 1 , false );
         add_option( "ss", "sampling step", 1, false );
-//        add_option( "t", "transfer function", 1, false );
-//        add_option( "rl", "repeat level", 1, false );
+        add_option( "t", "transfer function", 1, false );
+        //        add_option( "rl", "repeat level", 1, false );
         add_option( "PBVR", "with renderer of PBVR", 0, false );
         add_option( "SPT", "with renderer of SPT", 0, false );
         add_option( "Edge", "extract the edge of the the volume", 0, false );
         add_option( "Bspline", "with evaluation mehod of bspline", 0, false );
         add_option( "write", "write the block divided volume to this folder", 0, false );
         add_option( "writezk", "write the zk file", 0, false );
-
+        
     }
     
     void exec()
@@ -64,19 +61,18 @@ public:
         block_size = 1;
         sp = 3;
         samplingstep = 0.5;
-//        tfunc.create( 256 );
+        tfunc.create( 256 );
         
         if( !this->parse() ) exit( EXIT_FAILURE );
-        if( this->hasOption( "s" ) ) filename_s = this->optionValue<std::string>( "s" );
-        if( this->hasOption( "t" ) ) filename_t = this->optionValue<std::string>( "t" );
+        if( this->hasOption( "f" ) ) filename = this->optionValue<std::string>( "f" );
         if( this->hasOption( "b" ) ) block_size = this->optionValue<size_t>( "b" );
         if( this->hasOption( "sp" ) ) sp = this->optionValue<size_t>( "sp" );
         if( this->hasOption( "ss" ) ) samplingstep = this->optionValue<float>( "ss" );
-//        if( this->hasOption( "t" ) ) tfunc = kvs::TransferFunction( this->optionValue<std::string>( "t" ) );
-//        if( this->hasOption( "rl" ) ) rl = this->optionValue<size_t>( "rl" );
+        if( this->hasOption( "t" ) ) tfunc = kvs::TransferFunction( this->optionValue<std::string>( "t" ) );
+        //        if( this->hasOption( "rl" ) ) rl = this->optionValue<size_t>( "rl" );
         
         rl = sp * sp;
-
+        
     }
 };
 
@@ -100,50 +96,22 @@ public:
     
 };
 
-kvs::StructuredVolumeObject* RectToUniform( std::string filename_s, std::string filename_t )
+kvs::StructuredVolumeObject* RectToUniform( std::string filename )
 {
-    kvs::StructuredVolumeObject* object_s = new kvs::StructuredVolumeImporter( filename_s );
-    size_t nx_ori = object_s->resolution().x();
-    size_t ny_ori = object_s->resolution().y();
-    size_t nz_ori = object_s->resolution().z();
-    
-    kvs::StructuredVolumeObject* object_t = new kvs::StructuredVolumeImporter( filename_t );
-    float* pvalues_s = (float*)object_s->values().pointer();
-    float* pvalues_t = (float*)object_t->values().pointer();
-
-    
+    kvs::StructuredVolumeObject* object = new kvs::StructuredVolumeImporter( filename );
+    size_t nx_ori = object->resolution().x();
+    size_t ny_ori = object->resolution().y();
+    size_t nz_ori = object->resolution().z();
     
     // value processing
-    unsigned int n = object_t->nnodes();
-    float* pvalues = new float[n];
-
-    // color range 0 ~ 7
-    float purple = 0.5;
-    float blue = 1.5;
-    float water = 2.5;
-    float green = 4;
-    float orange = 5;
-    float red = 7;
-    
+    float* pvalues = (float*)object->values().pointer();
+    unsigned int n = object->nnodes();
+    float min = 31;
+    float max = 35;
     for ( size_t i = 0; i < n ; i++ )
     {
-
-        if ( 33.67 <= pvalues_s[i] && pvalues_s[i] < 35 && 3 <= pvalues_t[i] && pvalues_t[i] < 6 ) 
-            pvalues[i] = purple;
-        else if ( 32 <= pvalues_s[i] && pvalues_s[i] < 33.33 && 0 <= pvalues_t[i] && pvalues_t[i] < 2 )
-            pvalues[i] = blue;
-        else if ( 31 <= pvalues_s[i] && pvalues_s[i] < 32 && 0 <= pvalues_t[i] && pvalues_t[i] < 2 )
-            pvalues[i] = water;
-        else if ( 32 <= pvalues_s[i] && pvalues_s[i] < 33.33 && 2 <= pvalues_t[i] && pvalues_t[i] < 25 )
-            pvalues[i] = green;
-        else if ( 33.33 <= pvalues_s[i] && pvalues_s[i] < 35 && 0 <= pvalues_t[i] && pvalues_t[i] < 3
-                 || 33.33 <= pvalues_s[i] && pvalues_s[i] < 33.67 && 0 <= pvalues_t[i] && pvalues_t[i] < 25 )
-            pvalues[i] = orange;
-        else if ( 33.67 <= pvalues_s[i] && pvalues_s[i] < 35 && 6 <= pvalues_t[i] && pvalues_t[i] < 25 )
-            pvalues[i] = red;
-        else
-            pvalues[i] = 0;
-
+        if ( pvalues[i] < min ) pvalues[i] = min;
+        if ( pvalues[i] > max ) pvalues[i] = max;
     }
     
     // read the depth from outside
@@ -157,7 +125,7 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename_s, std::string 
         infile >> depth[i];
         infile >> dz[i];
     }
-        
+    
     // interpolate the value linearly
     // build the interpolator
     LinearInterpolator interp[ nx * ny ];
@@ -201,30 +169,29 @@ void WriteKVSML( kvs::StructuredVolumeObject* object, std::string filename )
     kvsml->write( filename );
 }
 
-
 int main( int argc, char** argv )
 {
     kvs::glut::Application app( argc, argv );
     kvs::glut::Screen screen( &app );
     screen.show();
-
+    
     Argument param( argc, argv );
     param.exec();
     
     //Load Volume Data
-    kvs::StructuredVolumeObject* volume = RectToUniform( param.filename_s, param.filename_t );
-    WriteKVSML( volume, "Uniform0315st.kvsml" );
+    kvs::StructuredVolumeObject* volume = RectToUniform( param.filename );
+    WriteKVSML( volume, "Uniform0315s.kvsml" );
     
     kvs::glew::RayCastingRenderer* renderer
     = new kvs::glew::RayCastingRenderer();
     renderer->disableShading();
-    float ka = 0.3;
-    float kd = 0.5;
-    float ks = 0.8;
-    float n  = 100;
-    renderer->setShader( kvs::Shader::Phong( ka, kd, ks, n ) );
     
     TransferFunctionEditor editor( &screen );
+    if ( argc > 3 )
+    {
+        editor.setTransferFunction( kvs::TransferFunction( argv[2] ) );
+        renderer->setTransferFunction( editor.transferFunction() );
+    }
     editor.setVolumeObject( volume );
     editor.show();
     
