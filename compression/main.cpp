@@ -164,7 +164,7 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename )
     return ( t_object );
 }
 
-void WriteKVSML( kvs::StructuredVolumeObject* object, std::string filename )
+void WriteKVSMLStructured( kvs::StructuredVolumeObject* object, std::string filename )
 {
     kvs::KVSMLObjectStructuredVolume* kvsml = new kvs::StructuredVolumeExporter<kvs::KVSMLObjectStructuredVolume>( object );
     kvsml->setWritingDataType( kvs::KVSMLObjectStructuredVolume::ExternalBinary );
@@ -177,10 +177,10 @@ int main( int argc, char** argv )
     Argument param( argc, argv );
     param.exec();
     
-    //Load Volume Data
-    kvs::StructuredVolumeObject* volume = RectToUniform( param.filename );
-    WriteKVSML( volume, "Uniform.kvsml" );
-    std::cout << "finish writting" << std::endl;
+//    // Interpolate the volume data
+//    kvs::StructuredVolumeObject* volume = RectToUniform( param.filename );
+//    WriteKVSMLStructured( volume, "Uniform.kvsml" );
+//    std::cout << "finish writting" << std::endl;
     
 //    kvs::glew::RayCastingRenderer* renderer
 //    = new kvs::glew::RayCastingRenderer();
@@ -203,17 +203,16 @@ int main( int argc, char** argv )
 //    screen.registerObject( volume, renderer );
 //    
 //    return( app.run() );
+    
+    // load the original volume data
+    kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
 
-    
-    
     std::string volumeName;
         
     size_t nx = volume->resolution().x();
     size_t ny = volume->resolution().y();
     size_t nz = volume->resolution().z();
     
-    kvs::glut::Screen screen( &app );
-
     //Block Division
     if ( param.hasOption( "b" ) )
     {
@@ -269,65 +268,67 @@ int main( int argc, char** argv )
             std::string outputName = volumeName + "Bspline_" + num + ".zk";
             FILE* outputFile = fopen( outputName.c_str(), "wb" );
             fwrite( buf, sizeof(float), length, outputFile );
+            std::::cou
         }
-        if( param.hasOption( "PBVR" ) )
-        {
-            kvs::PointObject* object = new kvs::CellByCellMetropolisSampling(
-                                                                             tet,
-                                                                             param.sp,
-                                                                             param.samplingstep,
-                                                                             param.tfunc,
-                                                                             0.0f
-                                                                             );
-            kvs::glew::ParticleVolumeRenderer* renderer_PBVR = new kvs::glew::ParticleVolumeRenderer();
-            renderer_PBVR->setRepetitionLevel( param.rl );
-            renderer_PBVR->enableShading();
-            renderer_PBVR->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
-            //renderer_PBVR->disableShading();
-            //renderer_PBVR->disableZooming();
-            
-            screen.registerObject( object, renderer_PBVR );
-            screen.setTitle( "PBVR Renderer");
-            
-            std::cout << "PBVR process has been done" << std::endl;
-	    std::cout << *object << std::endl;
-        }
-        if( param.hasOption( "Edge" ) )
-        {
-            kvs::LineObject* line = new kvs::ExtractEdges( tet );
-            screen.registerObject( line );
-            screen.setTitle( "ExtractEdges");
-            
-            std::cout << "ExtractEdges process has been done" << std::endl;
-        }
-    }
-    else
-    {
-        kvs::PointObject* object = new kvs::CellByCellMetropolisSampling(
-                                                                         volume,
-                                                                         param.sp,
-                                                                         param.samplingstep,
-                                                                         param.tfunc,
-                                                                         0.0f
-                                                                         );
-        kvs::glew::ParticleVolumeRenderer* renderer_PBVR = new kvs::glew::ParticleVolumeRenderer();
-        renderer_PBVR->setRepetitionLevel( param.rl );
-        renderer_PBVR->enableShading();
-        renderer_PBVR->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
-        //renderer_PBVR->disableShading();
-        //renderer_PBVR->disableZooming();
-
-        screen.registerObject( object, renderer_PBVR );
-        screen.setTitle( "PBVR Renderer");
-        
-        std::cout << "PBVR process has been done" << std::endl;
-	std::cout << *object << std::endl;
-    }
-    
-    screen.background()->setColor( kvs::RGBColor( 255, 255, 255 ));
-    screen.camera()->scale( kvs::Vector3f( 0.5 ) );
-    screen.setGeometry( 0, 0, 1024, 768 );
-    screen.show();
-    
-    return( app.run() );
+//        if( param.hasOption( "PBVR" ) )
+//        {
+//            kvs::PointObject* object = new kvs::CellByCellMetropolisSampling(
+//                                                                             tet,
+//                                                                             param.sp,
+//                                                                             param.samplingstep,
+//                                                                             param.tfunc,
+//                                                                             0.0f
+//                                                                             );
+//            kvs::glew::ParticleVolumeRenderer* renderer_PBVR = new kvs::glew::ParticleVolumeRenderer();
+//            renderer_PBVR->setRepetitionLevel( param.rl );
+//            renderer_PBVR->enableShading();
+//            renderer_PBVR->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
+//            //renderer_PBVR->disableShading();
+//            //renderer_PBVR->disableZooming();
+//            
+//            screen.registerObject( object, renderer_PBVR );
+//            screen.setTitle( "PBVR Renderer");
+//            
+//            std::cout << "PBVR process has been done" << std::endl;
+//	    std::cout << *object << std::endl;
+//        }
+//        if( param.hasOption( "Edge" ) )
+//        {
+//            kvs::LineObject* line = new kvs::ExtractEdges( tet );
+//            screen.registerObject( line );
+//            screen.setTitle( "ExtractEdges");
+//            
+//            std::cout << "ExtractEdges process has been done" << std::endl;
+//        }
+//    }
+//    else
+//    {
+//        kvs::PointObject* object = new kvs::CellByCellMetropolisSampling(
+//                                                                         volume,
+//                                                                         param.sp,
+//                                                                         param.samplingstep,
+//                                                                         param.tfunc,
+//                                                                         0.0f
+//                                                                         );
+//        kvs::glew::ParticleVolumeRenderer* renderer_PBVR = new kvs::glew::ParticleVolumeRenderer();
+//        renderer_PBVR->setRepetitionLevel( param.rl );
+//        renderer_PBVR->enableShading();
+//        renderer_PBVR->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
+//        //renderer_PBVR->disableShading();
+//        //renderer_PBVR->disableZooming();
+//
+//        screen.registerObject( object, renderer_PBVR );
+//        screen.setTitle( "PBVR Renderer");
+//        
+//        std::cout << "PBVR process has been done" << std::endl;
+//	std::cout << *object << std::endl;
+//    }
+//    
+//    screen.background()->setColor( kvs::RGBColor( 255, 255, 255 ));
+//    screen.camera()->scale( kvs::Vector3f( 0.5 ) );
+//    screen.setGeometry( 0, 0, 1024, 768 );
+//    screen.show();
+//    
+//    return( app.run() );
+}
 }
