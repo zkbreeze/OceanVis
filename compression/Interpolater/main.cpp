@@ -103,16 +103,16 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename )
     size_t ny_ori = object->resolution().y();
     size_t nz_ori = object->resolution().z();
     
-    // value processing
+//    // value processing
     float* pvalues = (float*)object->values().pointer();
-    unsigned int n = object->nnodes();
-    float min = 31;
-    float max = 35;
-    for ( size_t i = 0; i < n ; i++ )
-    {
-        if ( pvalues[i] < min ) pvalues[i] = min;
-        if ( pvalues[i] > max ) pvalues[i] = max;
-    }
+//    unsigned int n = object->nnodes();
+//    float min = 31;
+//    float max = 35;
+//    for ( size_t i = 0; i < n ; i++ )
+//    {
+//        if ( pvalues[i] < min ) pvalues[i] = min;
+//        if ( pvalues[i] > max ) pvalues[i] = max;
+//    }
     
     // read the depth from outside
     ifstream infile( "depth.txt" );    
@@ -186,12 +186,13 @@ int main( int argc, char** argv )
     = new kvs::glew::RayCastingRenderer();
     renderer->disableShading();
     
+    // value range
+    kvs::TransferFunction tfunc( 256 );
+    tfunc.setRange( 31, 35 );
+    
     TransferFunctionEditor editor( &screen );
-    if ( argc > 3 )
-    {
-        editor.setTransferFunction( kvs::TransferFunction( argv[2] ) );
-        renderer->setTransferFunction( editor.transferFunction() );
-    }
+    editor.setTransferFunction( tfunc );
+    renderer->setTransferFunction( editor.transferFunction() );
     editor.setVolumeObject( volume );
     editor.show();
     
