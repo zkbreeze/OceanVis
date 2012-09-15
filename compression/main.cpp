@@ -131,21 +131,24 @@ int main( int argc, char** argv )
         if( param.hasOption( "Bspline") )
         {
             std::cout << "With the Bspline evaluation" << std::endl;
-	    kvs::Timer time;
-	    time.start();
+            kvs::Timer time;
+            time.start();
             tet = new kvs::CubeToTetrahedraBspline( volume, param.block_size );
-	    time.stop();
-	    std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
-
+            time.stop();
+            std::cout << "min value of the compressed volume:" << tet->minValue() << std::endl;
+            std::cout << "max value of the compressed volume:" << tet->maxValue() << std::endl;
+            // this is the test for the amend
+            std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
+            
         }
         else
         {
-	    std::cout << "With the Linear evaluation" << std::endl;
-	    kvs::Timer time;
-	    time.start();
+            std::cout << "With the Linear evaluation" << std::endl;
+            kvs::Timer time;
+            time.start();
             tet = new kvs::CubeToTetrahedraLinear( volume, param.block_size );
-	    time.stop();
-	    std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
+            time.stop();
+            std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
         }
         delete volume;
     
@@ -195,7 +198,7 @@ int main( int argc, char** argv )
             renderer_PBVR->enableShading();
             renderer_PBVR->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
             //renderer_PBVR->disableShading();
-            renderer_PBVR->disableZooming();
+            //renderer_PBVR->disableZooming();
             
             screen.registerObject( object, renderer_PBVR );
             screen.setTitle( "PBVR Renderer");
@@ -226,7 +229,7 @@ int main( int argc, char** argv )
         renderer_PBVR->enableShading();
         renderer_PBVR->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
         //renderer_PBVR->disableShading();
-        renderer_PBVR->disableZooming();
+        //renderer_PBVR->disableZooming();
         
         screen.registerObject( object, renderer_PBVR );
         screen.setTitle( "PBVR Renderer");
