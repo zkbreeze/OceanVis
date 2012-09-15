@@ -62,13 +62,13 @@ kvs::ObjectBase* CubeToTetrahedraBspline::exec( const kvs::ObjectBase* object )
     
     //for( size_t  i = 0; i < ori_nnodes; i++ ) coefficient[i] = ori_values[i];
     ConvertToInterpolationCoefficients_3D( coefficient, nx, ny, nz, CVC_DBL_EPSILON );
-//    for ( size_t k = 0; k < nz ; k++ ) 
-//        for( size_t j = 0; j < ny; j++ )
-//            for( size_t i = 0; i < nx; i++ )
-//            {
-//                size_t index = i + j * nx + k * nx * ny;
-//                ori_values[index] = EvaluateCubicSplineAtGridPoint( coefficient, nx, ny, nz, i, j, k );
-//            }
+    for ( size_t k = 0; k < nz ; k++ ) 
+        for( size_t j = 0; j < ny; j++ )
+            for( size_t i = 0; i < nx; i++ )
+            {
+                size_t index = i + j * nx + k * nx * ny;
+                ori_values[index] = EvaluateCubicSplineAtGridPoint( coefficient, nx, ny, nz, i, j, k );
+            }
     
     //Calculate the value and coord of every vertex
     kvs::AnyValueArray values;
