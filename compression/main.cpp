@@ -115,7 +115,7 @@ int main( int argc, char** argv )
     Argument param( argc, argv );
     param.exec();
     
-    kvs::TransferFunction transferfunc = transferfunc;
+    kvs::TransferFunction transferfunc = param.tfunc;
     
     // load the original volume data
     kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
