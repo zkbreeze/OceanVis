@@ -39,22 +39,24 @@ public:
     float samplingstep;
     kvs::TransferFunction tfunc;
     size_t rl;
+    std::string outFilename;
     
     Argument( int argc, char** argv ) : CommandLine ( argc, argv )
     {
         add_help_option();
-        add_option( "f", "filename", 1, true );
-        add_option( "b", "block size", 1, false );
-        add_option( "sp", "subpixel level", 1 , false );
-        add_option( "ss", "sampling step", 1, false );
-        add_option( "t", "transfer function", 1, false );
-//        add_option( "rl", "repeat level", 1, false );
-        add_option( "PBVR", "with renderer of PBVR", 0, false );
-        add_option( "SPT", "with renderer of SPT", 0, false );
-        add_option( "Edge", "extract the edge of the the volume", 0, false );
-        add_option( "Bspline", "with evaluation mehod of bspline", 0, false );
-        add_option( "write", "write the block divided volume to this folder", 0, false );
-        add_option( "writezk", "write the zk file", 0, false );
+        addOption( "f", "filename", 1, true );
+        addOption( "b", "block size", 1, false );
+        addOption( "sp", "subpixel level", 1 , false );
+        addOption( "ss", "sampling step", 1, false );
+        addOption( "t", "transfer function", 1, false );
+//        addOption( "rl", "repeat level", 1, false );
+        addOption( "PBVR", "with renderer of PBVR", 0, false );
+        addOption( "SPT", "with renderer of SPT", 0, false );
+        addOption( "Edge", "extract the edge of the the volume", 0, false );
+        addOption( "Bspline", "with evaluation mehod of bspline", 0, false );
+        addOption( "write", "write the block divided volume to this folder", 0, false );
+        addOption( "writezk", "write the zk file", 0, false );
+        addOption( "outname", "input the output filename", 1, false );
 
     }
     
@@ -71,6 +73,7 @@ public:
         if( this->hasOption( "sp" ) ) sp = this->optionValue<size_t>( "sp" );
         if( this->hasOption( "ss" ) ) samplingstep = this->optionValue<float>( "ss" );
         if( this->hasOption( "t" ) ) tfunc = kvs::TransferFunction( this->optionValue<std::string>( "t" ) );
+        if( this->hasOption( "outname" )) outFilename = this->optionValue<std::string>( "outname" );
 //        if( this->hasOption( "rl" ) ) rl = this->optionValue<size_t>( "rl" );
         
         rl = sp * sp;
@@ -115,7 +118,7 @@ int main( int argc, char** argv )
     // load the original volume data
     kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
 
-    std::string volumeName;
+    std::string volumeName = param.outFilename;
         
     size_t nx = volume->resolution().x();
     size_t ny = volume->resolution().y();
@@ -233,7 +236,7 @@ int main( int argc, char** argv )
     }
     
     screen.background()->setColor( kvs::RGBColor( 255, 255, 255 ));
-    screen.camera()->scale( kvs::Vector3f( 0.5 ) );
+//    screen.camera()->scale( kvs::Vector3f( 0.5 ) );
     screen.setGeometry( 0, 0, 1024, 768 );
     screen.show();
     

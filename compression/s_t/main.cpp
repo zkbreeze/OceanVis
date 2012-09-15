@@ -213,7 +213,7 @@ int main( int argc, char** argv )
     
     //Load Volume Data
     kvs::StructuredVolumeObject* volume = RectToUniform( param.filename_s, param.filename_t );
-    WriteKVSML( volume, "Uniform0315st.kvsml" );
+    WriteKVSML( volume, "Uniform0715st.kvsml" );
     
     kvs::glew::RayCastingRenderer* renderer
     = new kvs::glew::RayCastingRenderer();
