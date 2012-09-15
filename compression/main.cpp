@@ -115,6 +115,8 @@ int main( int argc, char** argv )
     Argument param( argc, argv );
     param.exec();
     
+    kvs::TransferFunction transferfunc = transferfunc;
+    
     // load the original volume data
     kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
 
@@ -138,6 +140,7 @@ int main( int argc, char** argv )
             std::cout << "min value of the compressed volume:" << tet->minValue() << std::endl;
             std::cout << "max value of the compressed volume:" << tet->maxValue() << std::endl;
             std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
+            transferfunc.setRange( tet.minValue(), tet.maxValue() );
             
         }
         else
@@ -148,6 +151,8 @@ int main( int argc, char** argv )
             tet = new kvs::CubeToTetrahedraLinear( volume, param.block_size );
             time.stop();
             std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
+            transferfunc.setRange( tet.minValue(), tet.maxValue() );
+
         }
         delete volume;
     
@@ -189,7 +194,7 @@ int main( int argc, char** argv )
                                                                              tet,
                                                                              param.sp,
                                                                              param.samplingstep,
-                                                                             param.tfunc,
+                                                                             transferfunc,
                                                                              0.0f
                                                                              );
             kvs::glew::ParticleVolumeRenderer* renderer_PBVR = new kvs::glew::ParticleVolumeRenderer();
@@ -220,7 +225,7 @@ int main( int argc, char** argv )
                                                                          volume,
                                                                          param.sp,
                                                                          param.samplingstep,
-                                                                         param.tfunc,
+                                                                         transferfunc,
                                                                          0.0f
                                                                          );
         kvs::glew::ParticleVolumeRenderer* renderer_PBVR = new kvs::glew::ParticleVolumeRenderer();
