@@ -118,12 +118,19 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename_s, std::string 
     float* pvalues = new float[n];
 
     // color range 0 ~ 7
-    float purple = 0.5;
-    float blue = 1.5;
-    float water = 2.5;
-    float green = 4;
-    float orange = 5;
-    float red = 7;
+//    float purple = 0.5;
+//    float blue = 1.5;
+//    float water = 2.5;
+//    float green = 4;
+//    float orange = 5;
+//    float red = 7;
+    float purple = 0;
+    float blue = 10;
+    float water = 0;
+    float green = 40;
+    float orange = 0;
+    float red = 70;
+
     
     for ( size_t i = 0; i < n ; i++ )
     {
