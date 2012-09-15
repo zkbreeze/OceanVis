@@ -195,7 +195,7 @@ int main( int argc, char** argv )
             renderer_PBVR->enableShading();
             renderer_PBVR->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
             //renderer_PBVR->disableShading();
-            //renderer_PBVR->disableZooming();
+            renderer_PBVR->disableZooming();
             
             screen.registerObject( object, renderer_PBVR );
             screen.setTitle( "PBVR Renderer");
@@ -226,7 +226,7 @@ int main( int argc, char** argv )
         renderer_PBVR->enableShading();
         renderer_PBVR->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
         //renderer_PBVR->disableShading();
-        //renderer_PBVR->disableZooming();
+        renderer_PBVR->disableZooming();
         
         screen.registerObject( object, renderer_PBVR );
         screen.setTitle( "PBVR Renderer");
