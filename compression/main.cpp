@@ -137,7 +137,6 @@ int main( int argc, char** argv )
             time.stop();
             std::cout << "min value of the compressed volume:" << tet->minValue() << std::endl;
             std::cout << "max value of the compressed volume:" << tet->maxValue() << std::endl;
-            // this is the test for the amend
             std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
             
         }
