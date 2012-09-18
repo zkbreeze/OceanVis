@@ -119,6 +119,7 @@ int main( int argc, char** argv )
     
     // load the original volume data
     kvs::StructuredVolumeObject* volume = new kvs::StructuredVolumeImporter( param.filename );
+    transferfunc.setRange( volume->minValue(), volume->maxValue() );
 
     std::string volumeName = param.outFilename;
         
@@ -139,9 +140,17 @@ int main( int argc, char** argv )
             time.stop();
             std::cout << "min value of the compressed volume:" << tet->minValue() << std::endl;
             std::cout << "max value of the compressed volume:" << tet->maxValue() << std::endl;
-            std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
-            transferfunc.setRange( tet->minValue(), tet->maxValue() );
+            std::cout << "start processing the value" << std::endl;
+            float* pvalues = (float*)tet->values().pointer();
+            float min = volume->minValue();
+            float max = volume->maxValue();
+            for ( size_t i = 0; i < tet->nnodes(); i++ )
+            {
+                if( pvalues[i] > max ) pvalues[i] = max;
+                if( pvalues[i] < min ) pvalues[i] = min;
+            }
             
+            std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
         }
         else
         {
@@ -151,8 +160,6 @@ int main( int argc, char** argv )
             tet = new kvs::CubeToTetrahedraLinear( volume, param.block_size );
             time.stop();
             std::cout << "Processing time: " << time.msec() << "msec" << std::endl;
-            transferfunc.setRange( tet->minValue(), tet->maxValue() );
-
         }
         delete volume;
     

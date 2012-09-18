@@ -23,9 +23,6 @@
 #include "LinearInterpolator.cpp"
 
 using namespace std;
-size_t nx = 385;
-size_t ny = 349;
-size_t nz = 200;
 
 class Argument : public kvs::CommandLine
 {
@@ -102,6 +99,9 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename )
     size_t nx_ori = object->resolution().x();
     size_t ny_ori = object->resolution().y();
     size_t nz_ori = object->resolution().z();
+    size_t nx = nx_ori;
+    size_t ny = ny_ori;
+    size_t nz = 100;
     
     float* pvalues = (float*)object->values().pointer();
     // value processing
@@ -129,7 +129,7 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename )
     // interpolate the value linearly
     // build the interpolator
     LinearInterpolator interp[ nx * ny ];
-    for ( size_t k = 11; k < nz_ori; k ++ )
+    for ( size_t k = 9; k < nz_ori; k ++ )
         for ( size_t j = 0; j < ny_ori; j ++ )
             for ( size_t i = 0; i < nx_ori; i ++ )
             {
@@ -185,8 +185,6 @@ int main( int argc, char** argv )
     kvs::glew::RayCastingRenderer* renderer
     = new kvs::glew::RayCastingRenderer();
     renderer->disableShading();
-    
-
     
     TransferFunctionEditor editor( &screen );
 //    // value range
