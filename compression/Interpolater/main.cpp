@@ -101,7 +101,7 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename )
     size_t nz_ori = object->resolution().z();
     size_t nx = nx_ori;
     size_t ny = ny_ori;
-    size_t nz = 100;
+    size_t nz = 200;
     
     float* pvalues = (float*)object->values().pointer();
     // value processing
