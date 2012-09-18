@@ -45,8 +45,6 @@ int main( int argc, char** argv )
                 size_t index = i + j * nx_new + k * nx_new * ny_new;
                 size_t index_ori = ( i + 1 ) + ( j + 1 ) * nx + ( k + 1 ) * nx * ny;
                 buf[index] = pvalues[index_ori];
-                std::cout << index << std::endl;
-                std::cout << index_ori << std::endl;
             }
 
     
