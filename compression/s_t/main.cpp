@@ -24,9 +24,6 @@
 #include "LinearInterpolator.cpp"
 
 using namespace std;
-size_t nx = 385;
-size_t ny = 349;
-size_t nz = 200;
 
 class Argument : public kvs::CommandLine
 {
@@ -100,36 +97,108 @@ public:
     
 };
 
-kvs::StructuredVolumeObject* RectToUniform( std::string filename_s, std::string filename_t )
+kvs::StructuredVolumeObject* RectToUniform( std::string filename )
 {
-    kvs::StructuredVolumeObject* object_s = new kvs::StructuredVolumeImporter( filename_s );
+    kvs::StructuredVolumeObject* object = new kvs::StructuredVolumeImporter( filename );
+    size_t nx_ori = object->resolution().x();
+    size_t ny_ori = object->resolution().y();
+    size_t nz_ori = object->resolution().z();
+    size_t nx = nx_ori;
+    size_t ny = ny_ori;
+    size_t nz = 200;
+    
+    float* pvalues = (float*)object->values().pointer();
+    // value processing
+    unsigned int n = object->nnodes();
+    float min = 31;
+    float max = 35;
+    for ( size_t i = 0; i < n ; i++ )
+    {
+        if ( pvalues[i] < min ) pvalues[i] = min;
+        if ( pvalues[i] > max ) pvalues[i] = max;
+    }
+    
+    // read the depth from outside
+    ifstream infile( "depth.txt" );    
+    float* index = new float[78];
+    float* depth = new float[78];
+    float* dz = new float[78];
+    for ( size_t i = 0; i < 78; i ++ )
+    {
+        infile >> index[i];
+        infile >> depth[i];
+        infile >> dz[i];
+    }
+    
+    std::cout << nz_ori << std::endl;
+    
+    // interpolate the value linearly
+    // build the interpolator
+    LinearInterpolator interp[ nx * ny ];
+    for ( size_t k = 8; k < nz_ori; k ++ )
+        for ( size_t j = 0; j < ny_ori; j ++ )
+            for ( size_t i = 0; i < nx_ori; i ++ )
+            {
+                size_t index = i + j * nx + k * nx * ny;
+                interp[i + j * nx_ori].addDataPoint( depth[nz_ori - k], pvalues[index] );
+            }
+    // interpolate the value
+    kvs::AnyValueArray values;
+    float* buf = static_cast<float*>( values.allocate<float>( nx * ny * nz ) );
+    for ( size_t k = 0; k < nz; k ++ )
+        for ( size_t j = 0; j < ny; j ++ )
+            for ( size_t i = 0; i < nx; i ++ )
+            {
+                size_t index = i + j * nx + k * nx * ny;
+                float depth_new = 1000.0 - k * 5.0;
+                buf[index] = interp[i + j * nx].interpolate( depth_new );
+            }
+    
+    kvs::Vector3ui resolution( nx, ny, nz );
+    kvs::VolumeObjectBase::GridType grid_type = kvs::VolumeObjectBase::Uniform;
+    kvs::StructuredVolumeObject* t_object = new kvs::StructuredVolumeObject();
+    t_object->setGridType( grid_type);
+    t_object->setVeclen( 1 );
+    t_object->setResolution( resolution );
+    t_object->setValues( values );
+    
+    t_object->updateMinMaxCoords();
+    t_object->updateMinMaxValues();
+    
+    return ( t_object );
+}
+
+
+kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* object_s, kvs::StructuredVolumeObject* object_t )
+{
     size_t nx_ori = object_s->resolution().x();
     size_t ny_ori = object_s->resolution().y();
     size_t nz_ori = object_s->resolution().z();
-    
-    kvs::StructuredVolumeObject* object_t = new kvs::StructuredVolumeImporter( filename_t );
+    size_t nx = nx_ori;
+    size_t ny = ny_ori;
+    size_t nz = nz_ori;
+
     float* pvalues_s = (float*)object_s->values().pointer();
     float* pvalues_t = (float*)object_t->values().pointer();
-
-    
     
     // value processing
     unsigned int n = object_t->nnodes();
-    float* pvalues = new float[n];
+    kvs::AnyValueArray values;
+    float* pvalues = static_cast<float*>( values.allocate<float>( n ) );
 
     // color range 0 ~ 7
-//    float purple = 0.5;
-//    float blue = 1.5;
-//    float water = 2.5;
-//    float green = 4;
-//    float orange = 5;
-//    float red = 7;
-    float purple = 0;
-    float blue = 10;
-    float water = 0;
-    float green = 40;
-    float orange = 0;
-    float red = 70;
+   float purple = 0.5;
+   float blue = 1.5;
+   float water = 2.5;
+   float green = 4;
+   float orange = 5;
+   float red = 7;
+    // float purple = 0;
+    // float blue = 10;
+    // float water = 0;
+    // float green = 40;
+    // float orange = 0;
+    // float red = 70;
 
     
     for ( size_t i = 0; i < n ; i++ )
@@ -152,53 +221,19 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename_s, std::string 
             pvalues[i] = 0;
 
     }
-    
-    // read the depth from outside
-    ifstream infile( "depth.txt" );    
-    float* index = new float[78];
-    float* depth = new float[78];
-    float* dz = new float[78];
-    for ( size_t i = 0; i < 78; i ++ )
-    {
-        infile >> index[i];
-        infile >> depth[i];
-        infile >> dz[i];
-    }
         
-    // interpolate the value linearly
-    // build the interpolator
-    LinearInterpolator interp[ nx * ny ];
-    for ( size_t k = 11; k < nz_ori; k ++ )
-        for ( size_t j = 0; j < ny_ori; j ++ )
-            for ( size_t i = 0; i < nx_ori; i ++ )
-            {
-                size_t index = i + j * nx + k * nx * ny;
-                interp[i + j * nx_ori].addDataPoint( depth[nz_ori - k], pvalues[index] );
-            }
-    // interpolate the value
-    kvs::AnyValueArray values;
-    float* buf = static_cast<float*>( values.allocate<float>( nx * ny * nz ) );
-    for ( size_t k = 0; k < nz; k ++ )
-        for ( size_t j = 0; j < ny; j ++ )
-            for ( size_t i = 0; i < nx; i ++ )
-            {
-                size_t index = i + j * nx + k * nx * ny;
-                float depth_new = 997.0 - k * 5.0;
-                buf[index] = interp[i + j * nx].interpolate( depth_new );
-            }
-    
     kvs::Vector3ui resolution( nx, ny, nz );
     kvs::VolumeObjectBase::GridType grid_type = kvs::VolumeObjectBase::Uniform;
-    kvs::StructuredVolumeObject* t_object = new kvs::StructuredVolumeObject();
-    t_object->setGridType( grid_type);
-    t_object->setVeclen( 1 );
-    t_object->setResolution( resolution );
-    t_object->setValues( values );
+    kvs::StructuredVolumeObject* object = new kvs::StructuredVolumeObject();
+    object->setGridType( grid_type);
+    object->setVeclen( 1 );
+    object->setResolution( resolution );
+    object->setValues( values );
     
-    t_object->updateMinMaxCoords();
-    t_object->updateMinMaxValues();
+    object->updateMinMaxCoords();
+    object->updateMinMaxValues();
     
-    return ( t_object );
+    return ( object );
 }
 
 void WriteKVSML( kvs::StructuredVolumeObject* object, std::string filename )
@@ -219,7 +254,9 @@ int main( int argc, char** argv )
     param.exec();
     
     //Load Volume Data
-    kvs::StructuredVolumeObject* volume = RectToUniform( param.filename_s, param.filename_t );
+    kvs::StructuredVolumeObject* volume_s = RectToUniform( param.filename_s );
+    kvs::StructuredVolumeObject* volume_t = RectToUniform( param.filename_t );
+    kvs::StructuredVolumeObject* volume = ValueProcessing( volume_s, volume_t );
     WriteKVSML( volume, "Uniform0715st.kvsml" );
     
     kvs::glew::RayCastingRenderer* renderer

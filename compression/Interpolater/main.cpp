@@ -125,11 +125,13 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename )
         infile >> depth[i];
         infile >> dz[i];
     }
+
+    std::cout << nz_ori << std::endl;
     
     // interpolate the value linearly
     // build the interpolator
     LinearInterpolator interp[ nx * ny ];
-    for ( size_t k = 9; k < nz_ori; k ++ )
+    for ( size_t k = 8; k < nz_ori; k ++ )
         for ( size_t j = 0; j < ny_ori; j ++ )
             for ( size_t i = 0; i < nx_ori; i ++ )
             {
@@ -144,7 +146,7 @@ kvs::StructuredVolumeObject* RectToUniform( std::string filename )
             for ( size_t i = 0; i < nx; i ++ )
             {
                 size_t index = i + j * nx + k * nx * ny;
-                float depth_new = 997.0 - k * 5.0;
+                float depth_new = 1000.0 - k * 5.0;
                 buf[index] = interp[i + j * nx].interpolate( depth_new );
             }
     

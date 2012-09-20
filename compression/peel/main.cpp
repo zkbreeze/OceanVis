@@ -12,6 +12,8 @@
 #include <kvs/KVSMLObjectStructuredVolume>
 #include <kvs/StructuredVolumeExporter>
 
+size_t slice = 2;
+
 void WriteKVSML( kvs::StructuredVolumeObject* object, std::string filename )
 {
     kvs::KVSMLObjectStructuredVolume* kvsml = new kvs::StructuredVolumeExporter<kvs::KVSMLObjectStructuredVolume>( object );
@@ -32,9 +34,9 @@ int main( int argc, char** argv )
     
     float* pvalues = (float*)object->values().pointer();
     
-    size_t nx_new = nx - 2;
-    size_t ny_new = ny - 2;
-    size_t nz_new = nz - 2;
+    size_t nx_new = nx - 2 * slice;
+    size_t ny_new = ny - 2 * slice;
+    size_t nz_new = nz - 2 * slice;
     
     kvs::AnyValueArray values;
     float* buf = static_cast<float*>( values.allocate<float>( nx_new * ny_new * nz_new) );
@@ -43,7 +45,7 @@ int main( int argc, char** argv )
             for ( size_t i = 0; i < nx_new; i ++ )
             {
                 size_t index = i + j * nx_new + k * nx_new * ny_new;
-                size_t index_ori = ( i + 1 ) + ( j + 1 ) * nx + ( k + 1 ) * nx * ny;
+                size_t index_ori = ( i + slice ) + ( j + slice ) * nx + ( k + slice ) * nx * ny;
                 buf[index] = pvalues[index_ori];
 //                std::cout << index << std::endl;
 //                std::cout << index_ori << std::endl;
@@ -60,6 +62,6 @@ int main( int argc, char** argv )
     volume->updateMinMaxCoords();
     volume->updateMinMaxValues();
     
-    WriteKVSML( volume, "peel0315s.kvsml");
+    WriteKVSML( volume, "peel0715t.kvsml");
     
 }
