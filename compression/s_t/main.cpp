@@ -207,7 +207,7 @@ kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* objec
         if ( 33.67 <= pvalues_s[i] && pvalues_s[i] < 35 && 3 <= pvalues_t[i] && pvalues_t[i] < 6 ) 
             pvalues[i] = purple;
         else if ( 32 <= pvalues_s[i] && pvalues_s[i] < 33.33 && 0 <= pvalues_t[i] && pvalues_t[i] < 2 )
-            pvalues[i] = blue;
+            pvalues[i] = blue
         else if ( 31 <= pvalues_s[i] && pvalues_s[i] < 32 && 0 <= pvalues_t[i] && pvalues_t[i] < 2 )
             pvalues[i] = water;
         else if ( 32 <= pvalues_s[i] && pvalues_s[i] < 33.33 && 2 <= pvalues_t[i] && pvalues_t[i] < 25 )

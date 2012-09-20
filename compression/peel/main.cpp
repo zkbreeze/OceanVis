@@ -12,7 +12,7 @@
 #include <kvs/KVSMLObjectStructuredVolume>
 #include <kvs/StructuredVolumeExporter>
 
-size_t slice = 2;
+size_t slice = 3;
 
 void WriteKVSML( kvs::StructuredVolumeObject* object, std::string filename )
 {
@@ -36,7 +36,7 @@ int main( int argc, char** argv )
     
     size_t nx_new = nx - 2 * slice;
     size_t ny_new = ny - 2 * slice;
-    size_t nz_new = nz - 2 * slice;
+    size_t nz_new = nz;
     
     kvs::AnyValueArray values;
     float* buf = static_cast<float*>( values.allocate<float>( nx_new * ny_new * nz_new) );
@@ -45,10 +45,8 @@ int main( int argc, char** argv )
             for ( size_t i = 0; i < nx_new; i ++ )
             {
                 size_t index = i + j * nx_new + k * nx_new * ny_new;
-                size_t index_ori = ( i + slice ) + ( j + slice ) * nx + ( k + slice ) * nx * ny;
+                size_t index_ori = ( i + slice ) + ( j + slice ) * nx + k * nx * ny;
                 buf[index] = pvalues[index_ori];
-//                std::cout << index << std::endl;
-//                std::cout << index_ori << std::endl;
             }
     
     kvs::Vector3ui resolution( nx_new, ny_new, nz_new );
@@ -62,6 +60,6 @@ int main( int argc, char** argv )
     volume->updateMinMaxCoords();
     volume->updateMinMaxValues();
     
-    WriteKVSML( volume, "peel0715t.kvsml");
+    WriteKVSML( volume, "peel0315s.kvsml");
     
 }

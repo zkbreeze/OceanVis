@@ -17,6 +17,7 @@ int main( int argc, char** argv )
     kvs::TableObject* object = new kvs::TableObject();
     object->addColumn( volume1->values(), argv[1] );
     object->addColumn( volume2->values(), argv[2] );
+    object->addColumn( volume2->values(), argv[2] );
 
     delete volume1;
     delete volume2;
@@ -26,8 +27,8 @@ int main( int argc, char** argv )
     renderer->setPointSize( 5.0f );
     renderer->setPointOpacity( 128 );
     
-//    kvs::TransferFunction tfunc(256);
-//    renderer->setColorMap( tfunc.colorMap() );
+    kvs::TransferFunction tfunc(256);
+    renderer->setColorMap( tfunc.colorMap() );
 
     kvs::glut::Axis2DRenderer* axis = new kvs::glut::Axis2DRenderer();
     axis->setAxisWidth( 5.0 );
