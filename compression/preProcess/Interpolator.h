@@ -13,6 +13,7 @@ kvs::StructuredVolumeObject* Interpolator( kvs::StructuredVolumeObject* object, 
     size_t nx = nx_ori;
     size_t ny = ny_ori;
     size_t nz = 200;
+    std::cout << object->nnodes() << std::endl;
     
     float* pvalues = (float*)object->values().pointer();
     // value processing
