@@ -124,7 +124,7 @@ kvs::UnstructuredVolumeObject* ValueProcessing( kvs::UnstructuredVolumeObject* o
         else if ( 33.67 <= pvalues_s[i] && pvalues_s[i] < 35 && 6 <= pvalues_t[i] && pvalues_t[i] < 25 )
             pvalues[i] = red;
         else
-            pvalues[i] = 0;
+            pvalues[i] = 1;
         
     }
     
@@ -145,7 +145,6 @@ int main( int argc, char** argv )
 {
     kvs::glut::Application app( argc, argv );
     kvs::glut::Screen screen( &app );
-    screen.show();
     
     Argument param( argc, argv );
     param.exec();
@@ -155,11 +154,16 @@ int main( int argc, char** argv )
     kvs::UnstructuredVolumeObject* volume_t = new kvs::BlockLoader( param.filename_t );
     kvs::UnstructuredVolumeObject* volume = ValueProcessing( volume_s, volume_t );
     
+    std::cout << "max value of new volume:" << volume->maxValue() << std::endl;
+    std::cout << "min value of new volume:" << volume->minValue() << std::endl;
+    kvs::TransferFunction t = param.tfunc;
+    t.setRange( volume->minValue(), volume->maxValue() );
+    
     kvs::PointObject* object = new kvs::CellByCellMetropolisSampling(
                                                                      volume,
                                                                      param.sp,
                                                                      0.5,
-                                                                     param.tfunc,
+                                                                     t,
                                                                      0.0f
                                                                      );
     kvs::glew::ParticleVolumeRenderer* renderer_PBVR = new kvs::glew::ParticleVolumeRenderer();
