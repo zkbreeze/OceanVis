@@ -88,17 +88,17 @@ kvs::UnstructuredVolumeObject* ValueProcessing( kvs::UnstructuredVolumeObject* o
     float* pvalues_t = (float*)object_t->values().pointer();
     
     // value processing
-    unsigned int n = object_t->nnodes();
+    unsigned int n = object_s->nnodes();
     kvs::AnyValueArray values;
-    unsigned char* pvalues = static_cast<unsigned char*>( values.allocate<unsigned char>( n ) );
+    float* pvalues = static_cast<float*>( values.allocate<float>( n ) );
     
     // color range 0 ~ 7
-    unsigned char purple = 1;
-    unsigned char blue = 2;
-    unsigned char water = 3;
-    unsigned char green = 4;
-    unsigned char orange = 5;
-    unsigned char red = 7;
+    float purple = 1;
+    float blue = 2;
+    float water = 3;
+    float green = 4;
+    float orange = 5;
+    float red = 7;
     // float purple = 0;
     // float blue = 10;
     // float water = 0;
