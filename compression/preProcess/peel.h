@@ -47,9 +47,6 @@ kvs::StructuredVolumeObject* peel( kvs::StructuredVolumeObject* object, size_t s
     volume->setValues( values );
     
     volume->updateMinMaxCoords();
-    volume->updateMinMaxValues();
-    
-    std::cout << volume->nnodes() << std::endl;
-    
+    volume->updateMinMaxValues();    
     return volume;    
 }

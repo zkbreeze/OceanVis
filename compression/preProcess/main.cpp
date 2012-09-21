@@ -101,6 +101,7 @@ int main( int argc, char** argv )
         kvs::StructuredVolumeObject* peel_object = peel( volume, 3 );
         delete volume;
         object = Interpolator( peel_object, 31, 35 );
+        delete peel_object;
     }
     if ( param.hasOption( "t" ))
     {
@@ -108,7 +109,10 @@ int main( int argc, char** argv )
         kvs::StructuredVolumeObject* peel_object = peel( volume, 3 );
         delete volume;
         object = Interpolator( peel_object, 0, 25 );
+        delete peel_object;
     }
+    
+    std::cout << *object << std::endl;
     
     WriteKVSML( object, param.outname );
     
