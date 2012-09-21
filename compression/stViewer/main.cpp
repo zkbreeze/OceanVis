@@ -29,19 +29,23 @@ public:
     
     std::string filename_s;
     std::string filename_t;
+    kvs::TransferFunction tfunc;
     
     Argument( int argc, char** argv ) : CommandLine ( argc, argv )
     {
         add_help_option();
-        add_option( "s", "filename of s", 1, true );
-        add_option( "t", "filename of t", 1, true );
+        addOption( "s", "filename of s", 1, true );
+        addOption( "t", "filename of t", 1, true );
+        addOption( "tfunc", "tfunc", 1, false );
     }
     
     void exec()
     {        
+        tfunc.create( 256 );
         if( !this->parse() ) exit( EXIT_FAILURE );
         if( this->hasOption( "s" ) ) filename_s = this->optionValue<std::string>( "s" );
         if( this->hasOption( "t" ) ) filename_t = this->optionValue<std::string>( "t" );
+        if( this->hasOption( "tfunc" ) ) tfunc = kvs::TransferFunction( this->optionValue<std::string>( "tfunc" ) );
     }
 };
 
@@ -148,6 +152,8 @@ int main( int argc, char** argv )
     renderer->disableShading();
     
     TransferFunctionEditor editor( &screen );
+    editor.setTransferFunction( param.tfunc );
+    renderer->setTransferFunction( editor.transferFunction() );
     editor.setVolumeObject( volume );
     editor.show();
     
