@@ -128,17 +128,19 @@ kvs::UnstructuredVolumeObject* ValueProcessing( kvs::UnstructuredVolumeObject* o
         
     }
     
-    kvs::UnstructuredVolumeObject* object = new kvs::UnstructuredVolumeObject();
-    object->setVeclen( 1 );
-    object->setNNodes( object_s->nnodes() );
-    object->setCellType( kvs::UnstructuredVolumeObject::Tetrahedra );
-    object->setCoords( object_s->coords() );
-    object->setConnections( object_s->connections() );    
-    object->setValues( values );    
-    object->updateMinMaxCoords();
-    object->updateMinMaxValues();
+//    kvs::UnstructuredVolumeObject* object = new kvs::UnstructuredVolumeObject();
+//    object->setVeclen( 1 );
+//    object->setNNodes( object_s->nnodes() );
+//    object->setCellType( kvs::UnstructuredVolumeObject::Tetrahedra );
+//    object->setCoords( object_s->coords() );
+//    object->setConnections( object_s->connections() );    
+//    object->setValues( values );    
+//    object->updateMinMaxCoords();
+//    object->updateMinMaxValues();
+    object_s->setValues( values );
+    object_->updateMinMaxValues();
     
-    return ( object );
+    return ( object_s );
 }
 
 int main( int argc, char** argv )
@@ -157,7 +159,7 @@ int main( int argc, char** argv )
     std::cout << "max value of new volume:" << volume->maxValue() << std::endl;
     std::cout << "min value of new volume:" << volume->minValue() << std::endl;
     kvs::TransferFunction t = param.tfunc;
-    t.setRange( volume->minValue(), volume->maxValue() );
+    t.setRange(0, 7);
     
     kvs::PointObject* object = new kvs::CellByCellMetropolisSampling(
                                                                      volume,
