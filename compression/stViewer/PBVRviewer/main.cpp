@@ -128,11 +128,17 @@ kvs::UnstructuredVolumeObject* ValueProcessing( kvs::UnstructuredVolumeObject* o
         
     }
     
-    object_s->setValues( values );    
-    object_s->updateMinMaxCoords();
-    object_s->updateMinMaxValues();
+    kvs::UnstructuredVolumeObject* object = new kvs::UnstructuredVolumeObject();
+    object->setVeclen( 1 );
+    object->setNNodes( object_s->nnodes() );
+    object->setCellType( kvs::UnstructuredVolumeObject::Tetrahedra );
+    object->setCoords( object_s->coords() );
+    object->setConnections( object_s->connections() );    
+    object->setValues( values );    
+    object->updateMinMaxCoords();
+    object->updateMinMaxValues();
     
-    return ( object_s );
+    return ( object );
 }
 
 int main( int argc, char** argv )
