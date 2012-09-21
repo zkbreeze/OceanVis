@@ -138,7 +138,7 @@ kvs::UnstructuredVolumeObject* ValueProcessing( kvs::UnstructuredVolumeObject* o
 //    object->updateMinMaxCoords();
 //    object->updateMinMaxValues();
     object_s->setValues( values );
-    object_->updateMinMaxValues();
+    object_s->updateMinMaxValues();
     
     return ( object_s );
 }
