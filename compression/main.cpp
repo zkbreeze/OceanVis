@@ -13,6 +13,8 @@
 #include <kvs/KVSMLObjectStructuredVolume>
 #include <kvs/StructuredVolumeExporter>
 #include <kvs/KVSMLObjectUnstructuredVolume>
+#include <kvs/KVSMLObjectPoint>
+#include <kvs/PointExporter>
 #include <kvs/UnstructuredVolumeExporter>
 #include <kvs/TransferFunction>
 #include <kvs/glut/TransferFunctionEditor>
@@ -40,6 +42,7 @@ public:
     kvs::TransferFunction tfunc;
     size_t rl;
     std::string outFilename;
+    std::string outPoint;
     
     Argument( int argc, char** argv ) : CommandLine ( argc, argv )
     {
@@ -57,6 +60,7 @@ public:
         addOption( "write", "write the block divided volume to this folder", 0, false );
         addOption( "writezk", "write the zk file", 0, false );
         addOption( "outname", "input the output filename", 1, false );
+        addOption( "outpoint", "input the output point name", 1, false );
 
     }
     
@@ -74,7 +78,7 @@ public:
         if( this->hasOption( "ss" ) ) samplingstep = this->optionValue<float>( "ss" );
         if( this->hasOption( "t" ) ) tfunc = kvs::TransferFunction( this->optionValue<std::string>( "t" ) );
         if( this->hasOption( "outname" )) outFilename = this->optionValue<std::string>( "outname" );
-//        if( this->hasOption( "rl" ) ) rl = this->optionValue<size_t>( "rl" );
+        if( this->hasOption( "outpoint" )) outPoint = this->optionValue<std::string>( "outPoint" );
         
         rl = sp * sp;
 
@@ -101,10 +105,10 @@ public:
     
 };
 
-void WriteKVSMLStructured( kvs::StructuredVolumeObject* object, std::string filename )
+void WriteKVSMLPoint( kvs::PointObject* object, std::string filename )
 {
-    kvs::KVSMLObjectStructuredVolume* kvsml = new kvs::StructuredVolumeExporter<kvs::KVSMLObjectStructuredVolume>( object );
-    kvsml->setWritingDataType( kvs::KVSMLObjectStructuredVolume::ExternalBinary );
+    kvs::KVSMLObjectPoint* kvsml = new kvs::PointExporter<kvs::KVSMLObjectPoint>( object );
+    kvsml->setWritingDataType( kvs::KVSMLObjectPoint::ExternalBinary );
     kvsml->write( filename );
 }
 
@@ -216,6 +220,11 @@ int main( int argc, char** argv )
             
             std::cout << "PBVR process has been done" << std::endl;
             std::cout << *object << std::endl;
+            
+            if( param.hasOption( "outpoint" ) )
+                WriteKVSMLPoint( object, param.outPoint );
+            std::cout << "Finish writting the point object" << std::endl;
+            
         }
         if( param.hasOption( "Edge" ) )
         {
