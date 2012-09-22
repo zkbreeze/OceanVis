@@ -133,6 +133,14 @@ kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* objec
     return ( object );
 }
 
+void WriteKVSML( kvs::StructuredVolumeObject* object, std::string filename )
+{
+    kvs::KVSMLObjectStructuredVolume* kvsml = new kvs::StructuredVolumeExporter<kvs::KVSMLObjectStructuredVolume>( object );
+    kvsml->setWritingDataType( kvs::KVSMLObjectStructuredVolume::ExternalBinary );
+    kvsml->write( filename );
+}
+
+
 int main( int argc, char** argv )
 {
     kvs::glut::Application app( argc, argv );
@@ -146,6 +154,7 @@ int main( int argc, char** argv )
     kvs::StructuredVolumeObject* volume_s = new kvs::StructuredVolumeImporter( param.filename_s );
     kvs::StructuredVolumeObject* volume_t = new kvs::StructuredVolumeImporter( param.filename_t );
     kvs::StructuredVolumeObject* volume = ValueProcessing( volume_s, volume_t );
+    WriteKVSML( volume, "Uniform0715st.kvsml");
     
     kvs::glew::RayCastingRenderer* renderer
     = new kvs::glew::RayCastingRenderer();
