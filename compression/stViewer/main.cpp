@@ -88,7 +88,7 @@ kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* objec
    float blue = 2;
    float water = 3;
    float green = 4;
-   float orange = 5;
+   float yellow = 5;
    float red = 7;
     // float purple = 0;
     // float blue = 10;
@@ -102,16 +102,16 @@ kvs::StructuredVolumeObject* ValueProcessing( kvs::StructuredVolumeObject* objec
     {
 
         if ( 33.67 <= pvalues_s[i] && pvalues_s[i] < 35 && 3 <= pvalues_t[i] && pvalues_t[i] < 6 ) 
-            pvalues[i] = purple;
+            pvalues[i] = red;
         else if ( 32 <= pvalues_s[i] && pvalues_s[i] < 33.33 && 0 <= pvalues_t[i] && pvalues_t[i] < 2 )
-            pvalues[i] = blue;
+            pvalues[i] = 0;
         else if ( 31 <= pvalues_s[i] && pvalues_s[i] < 32 && 0 <= pvalues_t[i] && pvalues_t[i] < 2 )
-            pvalues[i] = water;
+            pvalues[i] = 0;
         else if ( 32 <= pvalues_s[i] && pvalues_s[i] < 33.33 && 2 <= pvalues_t[i] && pvalues_t[i] < 25 )
             pvalues[i] = green;
         else if ( 33.33 <= pvalues_s[i] && pvalues_s[i] < 35 && 0 <= pvalues_t[i] && pvalues_t[i] < 3
                  || 33.33 <= pvalues_s[i] && pvalues_s[i] < 33.67 && 0 <= pvalues_t[i] && pvalues_t[i] < 25 )
-            pvalues[i] = orange;
+            pvalues[i] = yellow;
         else if ( 33.67 <= pvalues_s[i] && pvalues_s[i] < 35 && 6 <= pvalues_t[i] && pvalues_t[i] < 25 )
             pvalues[i] = red;
         else
