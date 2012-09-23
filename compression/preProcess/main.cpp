@@ -127,5 +127,6 @@ int main( int argc, char** argv )
     
     screen.registerObject( object, renderer );
     
-    return( app.run() );    
+    return( app.run() ); 
+    exit( 0 );
 }
