@@ -10,7 +10,7 @@
 #include <kvs/glut/Application>
 #include "BlockLoader.h"
 
-double valid_opacity = 6.0/256.0;
+double valid_opacity = 30.0/256.0;
 
 void CalcBoundingBox( kvs::TetrahedralCell<float>* cell, kvs::Vector3f& min_c, kvs::Vector3f& max_c )
 {
@@ -105,11 +105,11 @@ int main( int argc, char** argv )
 //    return( app.run());
     
     //Calculate the error
-    float error;
-    float average_error;
-    float average_error_all;
-    size_t count = 0;
-    size_t count_error = 0;
+    float error = 0;
+    float error_e = 0; //efficient error
+    float average_error = 0;
+    float average_error_e = 0;
+    size_t count_e = 0;
     
     double valid_value = min_value + ( ( max_value - min_value) * valid_opacity );
     std::cout << "valid value: " << valid_value << std::endl;
@@ -118,27 +118,18 @@ int main( int argc, char** argv )
         // efficient error, not needed for the ocean data
         if(ori_values[i] >= valid_value)
         {
-            error += fabs(eva_values[i] - ori_values[i]) / ( max_value - min_value ) ;
-            count ++;
-            if( eva_values[i] - ori_values[i] ) count_error++;
+            error_e += fabs(eva_values[i] - ori_values[i]) / ( max_value - min_value ) ;
+            count_e ++;
         }    
-//        error += fabs( (eva_values[i] - ori_values[i]) / max_value ) ;
-//        count ++;
-//        if( eva_values[i] - ori_values[i] ) count_error++;
+        error += fabs( (eva_values[i] - ori_values[i]) / max_value ) ;
     }
 //    average_error = error/(nx * ny * nz);
-    average_error = error / count;
-    average_error_all = error / ( nx * ny * nz );
-    
-    
-    std::cout << "count: " << count << std::endl;
-    std::cout << "count_error: " << count_error << std::endl;
-    std::cout << "error rate: " << (float)count_error/count << std::endl;
+    average_error_e = error_e / count_e;
+    average_error = error / ( nx * ny * nz );
     
     std::cout << "whole error: " << error << std::endl;
+    std::cout << "whole error_e: " << error_e << std::endl;
     std::cout << "The average error is: " << average_error << std::endl;
-    std::cout << "The average error for the whole grid:" << average_error_all << std::endl;
+    std::cout << "The average error_e is:" << average_error_e << std::endl;
     std::cout << "RMSE: " << std::sqrt( average_error ) << std::endl;
-    
-
 }
