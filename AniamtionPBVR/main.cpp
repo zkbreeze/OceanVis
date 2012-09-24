@@ -11,7 +11,7 @@
 #include <kvs/glut/Slider>
 #include <kvs/glut/Label>
 #include <kvs/glut/LegendBar>
-#include <kvs/glew/PartcileVolumeRenderer>
+#include <kvs/glew/ParticleVolumeRenderer>
 #include <kvs/PointObject>
 #include <kvs/PointImporter>
 #include <kvs/CommandLine>
@@ -101,7 +101,7 @@ public:
     {
         glut_timer->stop();
         time_step = int( this->value() );
-        kvs::glew::PartcileVolumeRenderer* renderer = new kvs::glew::PartcileVolumeRenderer();
+        kvs::glew::ParticleVolumeRenderer* renderer = new kvs::glew::ParticleVolumeRenderer();
         renderer->setName( "renderer" );
         renderer->enableShading();
         renderer->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
@@ -122,7 +122,7 @@ class TimerEvent : public kvs::TimerEventListener
     void update( kvs::TimeEvent* event )
     {
 
-        kvs::glew::PartcileVolumeRenderer* renderer = new kvs::glew::PartcileVolumeRenderer();
+        kvs::glew::ParticleVolumeRenderer* renderer = new kvs::glew::ParticleVolumeRenderer();
         renderer->setName( "renderer" );
         renderer->enableShading();
         renderer->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
@@ -180,7 +180,7 @@ int main( int argc, char** argv )
     kvs::glut::Screen screen( &app );
     glut_timer = new kvs::glut::Timer( msec );
     
-    kvs::glew::PartcileVolumeRenderer* renderer = new kvs::glew::PartcileVolumeRenderer();
+    kvs::glew::ParticleVolumeRenderer* renderer = new kvs::glew::ParticleVolumeRenderer();
     renderer->setName( "renderer" );
     renderer->enableShading();
     renderer->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
