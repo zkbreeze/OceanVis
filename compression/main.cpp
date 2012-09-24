@@ -78,7 +78,7 @@ public:
         if( this->hasOption( "ss" ) ) samplingstep = this->optionValue<float>( "ss" );
         if( this->hasOption( "t" ) ) tfunc = kvs::TransferFunction( this->optionValue<std::string>( "t" ) );
         if( this->hasOption( "outname" )) outFilename = this->optionValue<std::string>( "outname" );
-        if( this->hasOption( "outpoint" )) outPoint = this->optionValue<std::string>( "outPoint" );
+        if( this->hasOption( "outpoint" )) outPoint = this->optionValue<std::string>( "outpoint" );
         
         rl = sp * sp;
 
