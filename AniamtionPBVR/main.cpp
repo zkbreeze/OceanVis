@@ -107,6 +107,7 @@ public:
         renderer->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
 //        tfunc.setRange( 10.0, object[time_step]->maxValue() );
         renderer->setTransferFunction( tfunc );
+        renderer->setRepetitionLevel( 9 );
         
         screen()->objectManager()->change( "object", object[time_step], false );
         screen()->rendererManager()->change( "renderer", renderer, true );
@@ -127,6 +128,7 @@ class TimerEvent : public kvs::TimerEventListener
         renderer->enableShading();
         renderer->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
         renderer->setTransferFunction( tfunc );
+        renderer->setRepetitionLevel( 9 );
         
         screen()->objectManager()->change( "object", object[time_step++], false );
         screen()->rendererManager()->change( "renderer", renderer, true );
@@ -185,6 +187,8 @@ int main( int argc, char** argv )
     renderer->enableShading();
     renderer->setShader( kvs::Shader::Phong( 0.5, 0.5, 0.8, 15.0 ) );
     renderer->setTransferFunction( tfunc );
+    renderer->setRepetitionLevel( 9 );
+
     screen.registerObject( object[0], renderer );
 
     screen.addKeyPressEvent( &key_press_event );
